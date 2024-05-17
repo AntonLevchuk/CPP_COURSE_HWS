@@ -4,6 +4,7 @@
 using std::cout;
 using std::endl;
 using std::cin;
+using std::string;
 
 void arithmeticProgression() {
     bool isContinue = true;
@@ -34,7 +35,6 @@ void arithmeticProgression() {
 void fibonacciNumber() {
     //fibonacci[98] -               135,301,852,344,706,746,049
     //max usigned long long value -  18,446,744,073,709,551,615
-    bool isContinue = true;
 
     do {
         int elemNumber;
@@ -59,8 +59,8 @@ void fibonacciNumber() {
             currentElem = nextElem;
         }
         cout << 'F' << elemNumber << ": " << nextElem << endl;
-        isContinue = false;
-    } while (isContinue);
+        break;
+    } while (true);
 }
 
 void factorial() {
@@ -98,6 +98,7 @@ void printGeometricShapes() {
         int squareHeight;
 
         bool symbol = true;
+        string result = "";
 
         cout << "Please input width and height for triangles:" << endl;
         cin >> triangleWidth >> triangleHeight;
@@ -142,11 +143,10 @@ void printGeometricShapes() {
 
         cout << "\nE:" << endl;
         for (int i = 0; i < triangleHeight; i++) {
-            for (int j = 0; j <= i; j++) {
-                cout << symbol;
-                symbol = !symbol;
-            }
-            cout << endl;
+            result.insert(0, std::to_string(symbol));
+            symbol = !symbol;
+            std::cout << result;
+            std::cout << std::endl;
         }
 
         isContinue = false;
