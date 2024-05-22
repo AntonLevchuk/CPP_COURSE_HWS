@@ -6,8 +6,15 @@
 #include <ctime>
 
 int generateRandomValue(int maxValue);
-std::string isUserWon(char pcSymbol, char userSymbol);
-void outputStats(std::map<std::string, int> roundStats);
+std::string isUserWon(char pcSymbol, char userSymbol, std::map<int, int>& roundStats);
+void outputStats(std::map<int, int> roundStats);
+
+enum RoundStats {
+	WIN,
+	LOOSE,
+	DRAW,
+	roundsAmountForStats,
+};
 
 int main()
 {
@@ -17,13 +24,13 @@ int main()
 
 	std::cout << "Hello! Welcome to the 'Rock paper scissors' game for 2 players." << std::endl;
 	while (continueCondition) {
-		std::map<std::string, int> roundStats = { {"WIN", 0}, {"LOOSE", 0}, {"DRAW", 0}, {"roundsAmountForStats", 0}};
+		std::map<int, int> roundStats = { {RoundStats::WIN, 0}, {RoundStats::LOOSE, 0}, {RoundStats::DRAW, 0}, {RoundStats::roundsAmountForStats, 0}};
 
 		int roundsAmount;
 
 		std::cout << "How many rounds would you like to play(Enter -1 to quit)? ";
 		std::cin >> roundsAmount;
-		roundStats["roundsAmountForStats"] = roundsAmount;
+		roundStats[RoundStats::roundsAmountForStats] = roundsAmount;
 
 		switch (roundsAmount)
 		{
@@ -62,8 +69,8 @@ int main()
 
 			randomSymbol = possibleSymbols[generateRandomValue(possibleSymbols.size() - 1)];
 
-			result = isUserWon(randomSymbol, userSymbol);
-			roundStats[result]++;
+			result = isUserWon(randomSymbol, userSymbol, roundStats);
+			//roundStats[result] += 1;
 			std::cout << "Result: " << result << std::endl;
 			std::cout << "PC symbol: " << randomSymbol << std::endl;
 
@@ -80,33 +87,40 @@ int generateRandomValue(int maxValue) {
 	return std::rand() % (maxValue + 1);
 }
 
-std::string isUserWon(char pcSymbol, char userSymbol) {
+std::string isUserWon(char pcSymbol, char userSymbol, std::map<int, int> &roundStats) {
 	std::string result = "";
 
 	if (pcSymbol == userSymbol) {
-		result = "DRAW";
+		roundStats[RoundStats::DRAW]++;
+		return "DRAW";
 	}
  	else if (userSymbol == 'r') {
 		if (pcSymbol == 's') {
+			roundStats[RoundStats::WIN]++;
 			result = "WIN";
 		}
 		else if (pcSymbol == 'p') {
+			roundStats[RoundStats::LOOSE]++;
 			result = "LOOSE";
 		}
 	}
 	else if (userSymbol == 'p') {
 		if (pcSymbol == 'r') {
+			roundStats[RoundStats::WIN]++;
 			result = "WIN";
 		}
 		else if (pcSymbol == 's') {
+			roundStats[RoundStats::LOOSE]++;
 			result = "LOOSE";
 		}
 	}
 	else if (userSymbol == 's') {
 		if (pcSymbol == 'p') {
+			roundStats[RoundStats::WIN]++;
 			result = "WIN";
 		}
 		else if (pcSymbol == 'r') {
+			roundStats[RoundStats::LOOSE]++;
 			result = "LOOSE";
 		}
 	}
@@ -114,18 +128,18 @@ std::string isUserWon(char pcSymbol, char userSymbol) {
 	return result;
 }
 
-void outputStats(std::map<std::string, int> roundStats) {
+void outputStats(std::map<int, int> roundStats) {
 	std::cout << std::string(40, '-') << std::endl;
 	std::cout << "Thanks for playing. Your final stats:" << std::endl;
-	std::cout << std::setw(25) << "Number of rounds - " << roundStats["roundsAmountForStats"] << std::endl;
-	std::cout << std::setw(25) << "Number of wins - " << roundStats["WIN"] << std::endl;
-	std::cout << std::setw(25) << "Number of looses - " << roundStats["LOOSE"] << std::endl;
-	std::cout << std::setw(25) << "Number of draws - " << roundStats["DRAW"] << std::endl;
+	std::cout << std::setw(25) << "Number of rounds - " << roundStats[RoundStats::roundsAmountForStats] << std::endl;
+	std::cout << std::setw(25) << "Number of wins - " << roundStats[RoundStats::WIN] << std::endl;
+	std::cout << std::setw(25) << "Number of looses - " << roundStats[RoundStats::LOOSE] << std::endl;
+	std::cout << std::setw(25) << "Number of draws - " << roundStats[RoundStats::DRAW] << std::endl;
 
-	if (roundStats["WIN"] > roundStats["LOOSE"]) {
+	if (roundStats[RoundStats::WIN] > roundStats[RoundStats::LOOSE]) {
 		std::cout << "Greate! You're smarter than my PC!" << std::endl;
 	}
-	else if (roundStats["WIN"] < roundStats["LOOSE"]) {
+	else if (roundStats[RoundStats::WIN] < roundStats[RoundStats::LOOSE]) {
 		std::cout << "Bad luck! My PC won! Try again!" << std::endl;
 	}
 	else {
